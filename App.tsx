@@ -129,6 +129,7 @@ const App: React.FC = () => {
 
       {view === AppView.GENERATOR && currentUser && (
         <Generator 
+          key={selectedProject ? selectedProject.id : 'new'}
           user={currentUser}
           onBack={handleBackToDashboard} 
           initialProject={selectedProject || undefined}
