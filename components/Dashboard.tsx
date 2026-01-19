@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Settings, LogOut, Clock, Search, Trash2, FolderOpen, Key, X, Save, ExternalLink, Loader2 } from 'lucide-react';
+import { Plus, Settings, LogOut, Clock, Search, Trash2, FolderOpen, X, Loader2, User as UserIcon } from 'lucide-react';
 import { User, SavedProject } from '../types';
 import { dbService } from '../services/dbService';
 
@@ -10,15 +10,12 @@ interface DashboardProps {
   onUserUpdate: (user: User) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout, onUserUpdate }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout }) => {
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSettings, setShowSettings] = useState(false);
-  const [apiKey, setApiKey] = useState(user.apiKey || '');
   
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-
   useEffect(() => {
     const loadProjects = async () => {
       setLoadingProjects(true);
@@ -39,29 +36,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout, onUs
     if (confirm('Tem certeza que deseja excluir este projeto?')) {
       await dbService.deleteProject(id);
       setProjects(projects.filter(p => p.id !== id));
-    }
-  };
-
-  const handleSaveSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaveStatus('saving');
-    
-    // Atualizar API Key do Usuário
-    const updatedUser = { ...user, apiKey };
-    
-    try {
-      await dbService.updateUser(updatedUser);
-      onUserUpdate(updatedUser);
-      
-      setSaveStatus('saved');
-      setTimeout(() => {
-        setSaveStatus('idle');
-        setShowSettings(false);
-      }, 1000);
-    } catch (error) {
-      console.error(error);
-      setSaveStatus('idle');
-      alert("Erro ao salvar configurações");
     }
   };
 
@@ -91,21 +65,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout, onUs
               <span className="hidden md:block text-sm text-slate-600">
                 Olá, <strong>{user.name.split(' ')[0]}</strong>
               </span>
-              
-              {!user.apiKey && (
-                 <button 
-                  onClick={() => setShowSettings(true)}
-                  className="hidden md:flex items-center gap-2 text-xs font-bold text-amber-700 bg-amber-100 py-1.5 px-3 rounded-full animate-pulse cursor-pointer hover:bg-amber-200 transition-colors"
-                >
-                  <Key className="h-3 w-3" />
-                  Configure sua API Key
-                </button>
-              )}
 
               <button 
                 onClick={() => setShowSettings(true)}
                 className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
-                title="Configurações"
+                title="Minha Conta"
               >
                 <Settings className="h-5 w-5" />
               </button>
@@ -216,63 +180,37 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout, onUs
         </div>
       </main>
 
-      {/* Settings Modal */}
+      {/* Settings Modal - Simplified for Account Info only */}
       {showSettings && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 my-8">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
               <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Settings className="h-5 w-5 text-indigo-600" />
-                Configurações
+                <UserIcon className="h-5 w-5 text-indigo-600" />
+                Minha Conta
               </h3>
               <button onClick={() => setShowSettings(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="h-5 w-5" />
               </button>
             </div>
             
-            <div className="p-6 space-y-8">
-              {/* API Key Section */}
-              <form onSubmit={handleSaveSettings}>
-                <div className="mb-6">
-                  <label className="block text-sm font-bold text-slate-900 mb-2 flex justify-between items-center">
-                    Google Gemini API Key
-                    <a 
-                      href="https://aistudio.google.com/app/apikey" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-indigo-600 text-xs font-normal hover:underline flex items-center gap-1"
-                    >
-                      Pegar chave aqui <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Key className="h-4 w-4 text-slate-400" />
-                    </div>
-                    <input
-                      type="password"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      placeholder="Cole sua chave AI Studio aqui..."
-                      className="block w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
-                    />
-                  </div>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Necessário para gerar os roteiros.
-                  </p>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-2xl font-bold text-indigo-600">
+                  {user.name.charAt(0)}
                 </div>
+                <div>
+                  <h4 className="text-lg font-bold text-slate-900">{user.name}</h4>
+                  <p className="text-slate-500 text-sm">{user.email}</p>
+                </div>
+              </div>
 
-                <div className="flex justify-end">
-                  <button 
-                    type="submit" 
-                    disabled={saveStatus === 'saving'}
-                    className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 disabled:opacity-70"
-                  >
-                    {saveStatus === 'saved' ? <CheckCircle className="h-4 w-4" /> : saveStatus === 'saving' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    {saveStatus === 'saved' ? 'Salvo!' : saveStatus === 'saving' ? 'Salvando...' : 'Salvar Chave'}
-                  </button>
+              <div className="pt-4 border-t border-slate-100">
+                <div className="bg-slate-50 rounded-lg p-4 text-xs text-slate-500">
+                  <p>ID da Conta: <span className="font-mono text-slate-700">{user.id}</span></p>
+                  <p className="mt-1">Membro desde: {formatDate(user.createdAt)}</p>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
@@ -280,10 +218,5 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout, onUs
     </div>
   );
 };
-
-// Helper component icon
-const CheckCircle = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-);
 
 export default Dashboard;

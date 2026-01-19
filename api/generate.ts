@@ -1,8 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
-
-// Removemos 'edge' runtime para garantir compatibilidade total com node_modules na Vercel
-// export const config = { runtime: 'edge' };
-
 export default async function handler(req: any, res: any) {
   // Configura CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -19,13 +14,15 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { request, apiKey } = req.body;
+    const { request } = req.body;
+
+    // A chave agora deve ser uma chave da DeepSeek configurada na Vercel
+    const apiKey = process.env.API_KEY;
 
     if (!apiKey) {
-      return res.status(400).json({ error: 'API Key não fornecida' });
+      console.error("ERRO CRÍTICO: API_KEY (DeepSeek) não configurada no ambiente do servidor.");
+      return res.status(500).json({ error: 'Configuração de servidor ausente. Contate o suporte.' });
     }
-
-    const ai = new GoogleGenAI({ apiKey: apiKey });
 
     const SYSTEM_INSTRUCTION = `
     Você é um planner de conteúdo e roteirista especializado em vídeos curtos e longos para criadores de conteúdo.
@@ -38,7 +35,8 @@ export default async function handler(req: any, res: any) {
     Priorize títulos com gancho forte.
 
     SAÍDA (OBRIGATÓRIO SEMPRE EM JSON VÁLIDO):
-    Retorne SEMPRE um JSON exatamente neste formato:
+    Você DEVE retornar APENAS um JSON válido, sem markdown (backticks) e sem texto antes ou depois.
+    Formato exato:
     {
       "resumo_estrategia": "string",
       "calendario": [
@@ -57,7 +55,7 @@ export default async function handler(req: any, res: any) {
     }
     `;
 
-    const prompt = `
+    const userPrompt = `
       Gere um plano de conteúdo com base nestes dados:
       nicho: ${request.niche}
       objetivo_principal: ${request.objective}
@@ -67,29 +65,41 @@ export default async function handler(req: any, res: any) {
       tom_de_voz: ${request.tone}
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash", // Usando modelo estável disponível
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        responseMimeType: "application/json",
+    // Chamada para API da DeepSeek (Compatível com OpenAI)
+    const response = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
       },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: SYSTEM_INSTRUCTION },
+          { role: "user", content: userPrompt }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 1.1 // DeepSeek recomenda temperatura um pouco mais alta para criatividade
+      })
     });
 
-    // Extrai o texto JSON da resposta
-    const text = response.text;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro na API DeepSeek: ${response.status} - ${errorText}`);
+    }
+
+    const data: any = await response.json();
+    const content = data.choices[0].message.content;
+
+    // Limpeza de segurança caso a IA retorne Markdown fences (```json ...)
+    const cleanJson = content.replace(/```json\n?|```/g, '').trim();
     
-    // Tenta parsear para garantir que é JSON válido antes de enviar
     let jsonResponse;
     try {
-      if (text) {
-        jsonResponse = JSON.parse(text);
-      } else {
-         throw new Error("Resposta vazia da IA");
-      }
+      jsonResponse = JSON.parse(cleanJson);
     } catch (e) {
-      // Se falhar o parse, envia um erro legível
-      return res.status(500).json({ error: "A IA não retornou um JSON válido. Tente novamente." });
+      console.error("Erro ao fazer parse do JSON:", cleanJson);
+      return res.status(500).json({ error: "A IA retornou um formato inválido. Tente novamente." });
     }
 
     return res.status(200).json(jsonResponse);

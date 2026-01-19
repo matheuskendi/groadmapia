@@ -58,15 +58,6 @@ export const dbService = {
     return apiCall('/api/auth', 'POST', { action: 'login', email, password });
   },
 
-  updateUser: async (updatedUser: User): Promise<User> => {
-    await apiCall('/api/auth', 'POST', { 
-      action: 'update', 
-      userId: updatedUser.id, 
-      apiKey: updatedUser.apiKey 
-    });
-    return updatedUser;
-  },
-
   // --- Projetos ---
 
   saveProject: async (userId: string, requestData: any, planData: ContentPlanResponse): Promise<SavedProject> => {

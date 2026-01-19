@@ -44,8 +44,8 @@ export interface User {
   name: string;
   email: string;
   password: string; // Em produção, nunca salve senhas em texto puro!
-  apiKey?: string; // Chave da API do usuário (opcional)
   createdAt: string;
+  // apiKey removida pois agora é centralizada no servidor
 }
 
 export interface SavedProject {

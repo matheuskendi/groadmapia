@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { generateContentPlan } from '../services/geminiService';
 import { dbService } from '../services/dbService';
 import { ContentPlanRequest, ContentPlanResponse, CalendarDay, User } from '../types';
-import { ArrowLeft, Loader2, Sparkles, Copy, Check, Video, Camera, Youtube, Share2, Save, AlertTriangle, Key } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, Copy, Check, Video, Camera, Youtube, Share2, Save, AlertTriangle } from 'lucide-react';
 
 interface GeneratorProps {
   onBack: () => void;
@@ -39,17 +39,12 @@ const Generator: React.FC<GeneratorProps> = ({ onBack, user }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user.apiKey) {
-      setError("Você precisa configurar sua API Key antes de gerar conteúdo. Volte ao Dashboard e clique no ícone de engrenagem.");
-      return;
-    }
-
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const data = await generateContentPlan(formData, user.apiKey);
+      const data = await generateContentPlan(formData);
       setResult(data);
       
       // Salvar automaticamente no DB Local (agora async)

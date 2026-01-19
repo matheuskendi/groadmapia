@@ -16,7 +16,7 @@ export default async function handler(req: any, res: any) {
   // Pega a URL do banco das variáveis de ambiente da Vercel
   const sql = neon(process.env.DATABASE_URL!);
 
-  const { action, name, email, password, userId, apiKey } = req.body;
+  const { action, name, email, password } = req.body;
 
   try {
     // 1. SIGNUP
@@ -28,14 +28,13 @@ export default async function handler(req: any, res: any) {
         const result = await sql`
           INSERT INTO users (id, name, email, password, created_at)
           VALUES (${id}, ${name}, ${email}, ${passwordHash}, NOW())
-          RETURNING id, name, email, api_key, created_at
+          RETURNING id, name, email, created_at
         `;
         const user = result[0];
         return res.status(200).json({ 
           id: user.id, 
           name: user.name, 
           email: user.email, 
-          apiKey: user.api_key || '', 
           createdAt: user.created_at 
         });
       } catch (e: any) {
@@ -58,17 +57,8 @@ export default async function handler(req: any, res: any) {
         id: user.id,
         name: user.name,
         email: user.email,
-        apiKey: user.api_key || '',
         createdAt: user.created_at
       });
-    }
-
-    // 3. UPDATE USER (API KEY)
-    if (action === 'update') {
-      if (!userId) return res.status(400).json({ error: "User ID required" });
-      
-      await sql`UPDATE users SET api_key = ${apiKey} WHERE id = ${userId}`;
-      return res.status(200).json({ success: true });
     }
 
     return res.status(400).json({ error: "Action not supported" });
