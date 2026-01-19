@@ -87,7 +87,7 @@ export default async function handler(req: any, res: any) {
         ],
         response_format: { type: "json_object" },
         temperature: 1.1, // DeepSeek recomenda temperatura um pouco mais alta para criatividade
-        max_tokens: 4000 // Aumentado para garantir resposta longa (JSON de 30 dias pode ser grande)
+        max_tokens: 8000 // Aumentado para garantir resposta longa (JSON de 30 dias pode ser grande)
       })
     });
 
@@ -100,29 +100,41 @@ export default async function handler(req: any, res: any) {
     const content = data.choices[0].message.content;
 
     // Limpeza AGRESSIVA de markdown/JSON fences
-    const cleanJson = content
-      .replace(/```(?:json)?[\s\S]*?```/gs, '')  // Remove ```json ... ```
-      .replace(/```[\s\S]*?```/gs, '')          // Remove qualquer ```
+    let cleanJson = content
+      .replace(/```(?:json)?\n?[\s\S]*?```/gs, '')
+      .replace(/```\s*[\s\S]*?```/gs, '')
+      .replace(/^.*?\{/s, '{')
+      .replace(/\}.*$/s, '}')
+      .replace(/\\"/g, '"')
       .trim();
 
-    console.log('Raw DeepSeek response:', cleanJson.substring(0, 200));  // Log pra debug
-
-    let jsonResponse;
+    let jsonResponse: any;
     try {
       jsonResponse = JSON.parse(cleanJson);
-      if (!jsonResponse.calendario || jsonResponse.calendario.length < 20) {
-        throw new Error('JSON válido mas calendário incompleto');
+    } catch {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonResponse = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('JSON inválido');
       }
-    } catch (e) {
-      console.error('Parse fail - raw:', cleanJson);
-      return res.status(500).json({ error: 'IA retornou inválido. Raw: ' + cleanJson.substring(0, 100) });
     }
 
-    // Sucesso! Retorna o JSON da IA
-    return res.status(200).json(jsonResponse);
+    // Validação FLEXÍVEL (16+ posts OK)
+    if (!jsonResponse.calendario || jsonResponse.calendario.length < 16) {
+      console.error('Calendário incompleto:', jsonResponse.calendario?.length);
+      res.status(500).json({ 
+        error: 'Plano incompleto', 
+        posts: jsonResponse.calendario?.length || 0 
+      });
+      return;
+    }
+
+    console.log('✅ Sucesso:', jsonResponse.calendario.length, 'posts gerados');
+    res.status(200).json(jsonResponse);
 
   } catch (error: any) {
-    console.error('Erro no handler:', error);
-    return res.status(500).json({ error: error.message || 'Erro interno do servidor' });
+    console.error('Handler error:', error);
+    res.status(500).json({ error: error.message || 'Erro interno' });
   }
 }
