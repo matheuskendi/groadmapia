@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { generateContentPlan } from '../services/geminiService';
 import { dbService } from '../services/dbService';
-import { ContentPlanRequest, ContentPlanResponse, CalendarDay, User } from '../types';
+import { ContentPlanRequest, ContentPlanResponse, CalendarDay, User, SavedProject } from '../types';
 import { ArrowLeft, Loader2, Sparkles, Copy, Check, Video, Camera, Youtube, Share2, Save, AlertTriangle } from 'lucide-react';
 
 interface GeneratorProps {
   onBack: () => void;
   user: User;
+  initialProject?: SavedProject;
 }
 
-const Generator: React.FC<GeneratorProps> = ({ onBack, user }) => {
+const Generator: React.FC<GeneratorProps> = ({ onBack, user, initialProject }) => {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<ContentPlanResponse | null>(null);
+  const [result, setResult] = useState<ContentPlanResponse | null>(initialProject ? initialProject.planData : null);
   const [error, setError] = useState<string | null>(null);
   const [activeDay, setActiveDay] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(!!initialProject);
 
   const [formData, setFormData] = useState<ContentPlanRequest>({
-    niche: '',
+    niche: initialProject?.niche || '',
     objective: '',
-    platform: 'Instagram Reels',
+    platform: initialProject?.platform || 'Instagram Reels',
     frequency: 5,
     level: 'Iniciante',
     tone: 'Divertido e Educativo'
