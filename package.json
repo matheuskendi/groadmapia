@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.4",
+    "@tailwindcss/vite": "^4.1.18",
     "bcryptjs": "^2.4.3",
     "lucide-react": "^0.400.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
