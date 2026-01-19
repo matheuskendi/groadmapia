@@ -99,21 +99,30 @@ export default async function handler(req: any, res: any) {
     const data: any = await response.json();
     const content = data.choices[0].message.content;
 
-    // Limpeza de segurança caso a IA retorne Markdown fences (```json ...)
-    const cleanJson = content.replace(/```json\n?|```/g, '').trim();
-    
+    // Limpeza AGRESSIVA de markdown/JSON fences
+    const cleanJson = content
+      .replace(/```(?:json)?[\s\S]*?```/gs, '')  // Remove ```json ... ```
+      .replace(/```[\s\S]*?```/gs, '')          // Remove qualquer ```
+      .trim();
+
+    console.log('Raw DeepSeek response:', cleanJson.substring(0, 200));  // Log pra debug
+
     let jsonResponse;
     try {
       jsonResponse = JSON.parse(cleanJson);
+      if (!jsonResponse.calendario || jsonResponse.calendario.length < 20) {
+        throw new Error('JSON válido mas calendário incompleto');
+      }
     } catch (e) {
-      console.error("Erro ao fazer parse do JSON:", cleanJson);
-      return res.status(500).json({ error: "A IA retornou um formato inválido. Tente novamente." });
+      console.error('Parse fail - raw:', cleanJson);
+      return res.status(500).json({ error: 'IA retornou inválido. Raw: ' + cleanJson.substring(0, 100) });
     }
 
+    // Sucesso! Retorna o JSON da IA
     return res.status(200).json(jsonResponse);
 
   } catch (error: any) {
-    console.error("API Error:", error);
-    return res.status(500).json({ error: error.message || "Erro interno ao gerar conteúdo" });
+    console.error('Erro no handler:', error);
+    return res.status(500).json({ error: error.message || 'Erro interno do servidor' });
   }
 }
