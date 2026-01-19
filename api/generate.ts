@@ -26,13 +26,14 @@ export default async function handler(req: any, res: any) {
 
     const SYSTEM_INSTRUCTION = `
     Você é um planner de conteúdo e roteirista especializado em vídeos curtos e longos para criadores de conteúdo.
-    Sua função é pegar poucas informações sobre o criador e entregar um plano de conteúdo completo em formato estruturado.
+    Sua função é pegar poucas informações sobre o criador e entregar um plano de conteúdo MENSAL (30 dias / 4 semanas) completo em formato estruturado.
 
     REGRAS GERAIS:
     Escreva sempre em português brasileiro.
     Foque em ideias que atraem audiência e ajudam a vender.
     Nunca copie conteúdo.
     Priorize títulos com gancho forte.
+    Gere conteúdo suficiente para cobrir 4 semanas completas com base na frequência informada pelo usuário.
 
     SAÍDA (OBRIGATÓRIO SEMPRE EM JSON VÁLIDO):
     Você DEVE retornar APENAS um JSON válido, sem markdown (backticks) e sem texto antes ou depois.
@@ -41,7 +42,7 @@ export default async function handler(req: any, res: any) {
       "resumo_estrategia": "string",
       "calendario": [
         {
-          "dia": "Dia 1",
+          "dia": "Semana X - Dia Y (ou Data sugerida)",
           "plataforma": "string",
           "tipo_conteudo": "video_curto | video_longo | live | carrossel",
           "titulo": "string",
@@ -56,13 +57,19 @@ export default async function handler(req: any, res: any) {
     `;
 
     const userPrompt = `
-      Gere um plano de conteúdo com base nestes dados:
+      Gere um plano de conteúdo COMPLETO PARA 30 DIAS (4 SEMANAS) com base nestes dados:
       nicho: ${request.niche}
       objetivo_principal: ${request.objective}
       plataforma_principal: ${request.platform}
-      frequencia_semana: ${request.frequency}
+      frequencia_semana: ${request.frequency} posts por semana (Total esperado: ${request.frequency * 4} posts)
       nivel_publico: ${request.level}
       tom_de_voz: ${request.tone}
+
+      IMPORTANTE:
+      1. Gere o planejamento para as 4 semanas completas.
+      2. O array "calendario" deve conter aproximadamente ${request.frequency * 4} itens (posts).
+      3. Organize o campo "dia" para indicar a sequência (ex: "Semana 1 - Post 1", "Semana 1 - Post 2", ..., "Semana 4 - Post X").
+      4. Não pare na primeira semana. O usuário precisa do mês todo.
     `;
 
     // Chamada para API da DeepSeek (Compatível com OpenAI)
@@ -79,7 +86,8 @@ export default async function handler(req: any, res: any) {
           { role: "user", content: userPrompt }
         ],
         response_format: { type: "json_object" },
-        temperature: 1.1 // DeepSeek recomenda temperatura um pouco mais alta para criatividade
+        temperature: 1.1, // DeepSeek recomenda temperatura um pouco mais alta para criatividade
+        max_tokens: 4000 // Aumentado para garantir resposta longa (JSON de 30 dias pode ser grande)
       })
     });
 
