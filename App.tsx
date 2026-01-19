@@ -3,7 +3,7 @@ import LandingPage from './components/LandingPage';
 import Generator from './components/Generator';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
-import { AppView, AuthMode, User } from './types';
+import { AppView, AuthMode, User, SavedProject } from './types';
 import { dbService } from './services/dbService';
 
 const App: React.FC = () => {
@@ -12,6 +12,7 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isDbReady, setIsDbReady] = useState(false);
   const [connectionError, setConnectionError] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<SavedProject | null>(null);
 
   // Inicializar Banco de Dados com Timeout Absoluto
   useEffect(() => {
@@ -75,6 +76,16 @@ const App: React.FC = () => {
     setView(AppView.LANDING);
   };
 
+  const handleOpenProject = (project: SavedProject) => {
+    setSelectedProject(project);
+    setView(AppView.GENERATOR);
+  };
+
+  const handleBackToDashboard = () => {
+    setSelectedProject(null);
+    setView(AppView.DASHBOARD);
+  };
+
   if (!isDbReady) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -109,16 +120,18 @@ const App: React.FC = () => {
       {view === AppView.DASHBOARD && currentUser && (
         <Dashboard 
           user={currentUser}
-          onCreateNew={() => setView(AppView.GENERATOR)}
+          onCreateNew={() => { setSelectedProject(null); setView(AppView.GENERATOR); }}
           onLogout={handleLogout}
           onUserUpdate={handleUserUpdate}
+          onOpenProject={handleOpenProject}
         />
       )}
 
       {view === AppView.GENERATOR && currentUser && (
         <Generator 
           user={currentUser}
-          onBack={() => setView(AppView.DASHBOARD)} 
+          onBack={handleBackToDashboard} 
+          initialProject={selectedProject || undefined}
         />
       )}
     </>
