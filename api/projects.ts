@@ -23,15 +23,28 @@ export default async function handler(req: any, res: any) {
         SELECT * FROM projects WHERE user_id = ${userId} ORDER BY created_at DESC
       `;
       
-      const projects = rows.map((row: any) => ({
-        id: row.id,
-        userId: row.user_id,
-        title: row.title,
-        niche: row.niche,
-        platform: row.platform,
-        createdAt: row.created_at,
-        planData: row.plan_data
-      }));
+      const projects = rows.map((row: any) => {
+        // Correção de segurança: Garantir que plan_data seja um objeto JSON válido
+        let planData = row.plan_data;
+        if (typeof planData === 'string') {
+          try {
+            planData = JSON.parse(planData);
+          } catch (e) {
+            console.error("Erro ao fazer parse de plan_data", e);
+            planData = null; 
+          }
+        }
+
+        return {
+          id: row.id,
+          userId: row.user_id,
+          title: row.title,
+          niche: row.niche,
+          platform: row.platform,
+          createdAt: row.created_at,
+          planData: planData
+        };
+      });
 
       return res.status(200).json(projects);
     }
@@ -42,6 +55,8 @@ export default async function handler(req: any, res: any) {
       const id = randomUUID();
       const title = `${requestData.niche} - ${requestData.platform}`;
 
+      // Envia o objeto diretamente para o driver tratar a conversão para JSONB
+      // Ou stringify se necessário, mas o parse no GET garante a leitura correta
       await sql`
          INSERT INTO projects (id, user_id, title, niche, platform, plan_data, created_at)
          VALUES (${id}, ${userId}, ${title}, ${requestData.niche}, ${requestData.platform}, ${JSON.stringify(planData)}, NOW())
