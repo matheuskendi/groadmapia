@@ -8,9 +8,10 @@ interface DashboardProps {
   onCreateNew: () => void;
   onLogout: () => void;
   onUserUpdate: (user: User) => void;
+  onOpenProject: (project: SavedProject) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout, onOpenProject }) => {
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -140,11 +141,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onCreateNew, onLogout }) =>
 
           {/* User Projects List */}
           {!loadingProjects && filteredProjects.map((project) => (
-            <div key={project.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-48 cursor-pointer relative group">
+            <div 
+              key={project.id} 
+              onClick={() => onOpenProject(project)}
+              className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-48 cursor-pointer relative group"
+            >
               
               <button 
                 onClick={(e) => handleDelete(e, project.id)}
-                className="absolute top-4 right-4 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                className="absolute top-4 right-4 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 z-10"
                 title="Excluir projeto"
               >
                 <Trash2 className="h-4 w-4" />
