@@ -38,6 +38,33 @@ export default async function handler(req: any, res: any) {
       )
     `;
 
+    // Criar tabela de Planos
+    await sql`
+      CREATE TABLE IF NOT EXISTS plans (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,  -- 'Grátis', 'Pro', 'Max'
+        price DECIMAL(10,2) NOT NULL,  -- 0.00, 29.90, 99.90
+        currency TEXT DEFAULT 'BRL',
+        interval_months INTEGER DEFAULT 1,
+        features JSONB,  -- ["ilimitado", "IA avançada"]
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  )
+`;
+    // Tabela de Assinaturas (vincula user + plano + Mercado Pago)
+    await sql`
+      CREATE TABLE IF NOT EXISTS subscriptions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+        plan_id TEXT REFERENCES plans(id),
+        mp_preapproval_plan_id TEXT,  -- ID do plano no MP
+        status TEXT NOT NULL,  -- 'active', 'pending', 'cancelled'
+        start_date TIMESTAMP WITH TIME ZONE,
+        next_billing_date TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  ) 
+`;
+
     return res.status(200).json({ message: "Database configured successfully" });
   } catch (error: any) {
     console.error("Setup Error:", error);
