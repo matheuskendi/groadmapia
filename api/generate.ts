@@ -42,7 +42,7 @@ export default async function handler(req: any, res: any) {
       "resumo_estrategia": "string",
       "calendario": [
         {
-          "dia": "Dia x - Semana y (ou Data sugerida)",
+          "dia": "Dia x ",
           "plataforma": "string",
           "tipo_conteudo": "video_curto | video_longo | live | carrossel",
           "titulo": "string",
