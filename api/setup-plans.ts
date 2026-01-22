@@ -40,7 +40,9 @@ export default async function handler(
         const idMax = randomUUID();
 
         await sql`
-            SINSERT INTO plans (id, name, price, currency, features, interval_months) VALUES
+
+            INSERT INTO plans (id, name, price, currency, features, interval_months) VALUES
+                                                                                         
             (${idGratis}, 'Grátis', 0.00, 'BRL', 
              '["2 roteiros/semana", "1 template", "básico"]'::jsonb, 1),
              
