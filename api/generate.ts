@@ -68,7 +68,7 @@ export default async function handler(req: any, res: any) {
       IMPORTANTE:
       1. Gere o planejamento para as 4 semanas completas.
       2. O array "calendario" deve conter aproximadamente ${request.frequency * 4} itens (posts).
-      3. Organize o campo "dia" para indicar a sequência (ex: "Dia 1 - Post 1", "Dia 2 - Post 2", ..., "Dia x - Post X").
+      3. Organize o campo "dia" para indicar a sequência (ex: "Semana 1 - Post 1", "Semana 1 - Post 2", ..., "Semana 4 - Post X").
       4. Não pare na primeira semana. O usuário precisa do mês todo.
     `;
 

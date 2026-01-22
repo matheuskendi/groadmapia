@@ -199,14 +199,40 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuth }) => {
             </button>
           </div>
 
-          {/* Criador Pro */}
+          {/* Criador Plus */}
           <div className="p-8 rounded-3xl border-2 border-indigo-600 bg-white relative shadow-xl flex flex-col">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
               Mais Popular
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">Criador Pro</h3>
             <p className="text-slate-500 text-sm mb-6">Criador individual sério</p>
-            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 29<span className="text-lg font-normal text-slate-500">/mês</span></div>
+            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 39<span className="text-lg font-normal text-slate-500">/mês</span></div>
+            <ul className="space-y-4 mb-8 flex-1">
+              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
+                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
+                Calendários ilimitados de 30 dias
+              </li>
+              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
+                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
+                3 projetos salvos
+              </li>
+            </ul>
+            <button
+                onClick={() => onAuth('SIGNUP')}
+                className="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg transition-colors"
+            >
+              Começar agora
+            </button>
+          </div>
+
+          {/* Criador Pro */}
+          <div className="p-8 rounded-3xl border-2 border-indigo-600 bg-white relative shadow-xl flex flex-col">
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+              Mais Popular
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Criador Plus</h3>
+            <p className="text-slate-500 text-sm mb-6">Criador individual sério</p>
+            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 69<span className="text-lg font-normal text-slate-500">/mês</span></div>
             <ul className="space-y-4 mb-8 flex-1">
               <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
                 <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
@@ -233,7 +259,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuth }) => {
           <div className="p-8 rounded-3xl border border-slate-200 bg-white flex flex-col">
             <h3 className="text-xl font-bold text-slate-900 mb-2">Agência Max</h3>
             <p className="text-slate-500 text-sm mb-6">Quem gerencia clientes/canais</p>
-            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 79<span className="text-lg font-normal text-slate-500">/mês</span></div>
+            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 99<span className="text-lg font-normal text-slate-500">/mês</span></div>
             <ul className="space-y-4 mb-8 flex-1">
               <li className="flex items-start gap-2 text-slate-600 text-sm">
                 <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
