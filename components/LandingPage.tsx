@@ -175,114 +175,124 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuth }) => {
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-slate-900">Escolha o plano ideal para seu momento</h2>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+
           {/* Grátis */}
-          <div className="p-8 rounded-3xl border border-slate-200 bg-white flex flex-col">
+          <div className="group p-6 lg:p-8 rounded-3xl border border-slate-200 bg-white h-full flex flex-col hover:shadow-md transition-all">
             <h3 className="text-xl font-bold text-slate-900 mb-2">Grátis</h3>
             <p className="text-slate-500 text-sm mb-6">Testador curioso</p>
             <div className="text-4xl font-bold text-slate-900 mb-8">R$ 0<span className="text-lg font-normal text-slate-500">/mês</span></div>
-            <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex items-start gap-2 text-slate-600 text-sm">
-                <CheckCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
+            <ul className="space-y-3 mb-8 flex-1 min-h-0 text-sm text-slate-600">
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5 flex-shrink-0" />
                 2 calendários de 7 dias/mês
               </li>
-              <li className="flex items-start gap-2 text-slate-600 text-sm">
-                <CheckCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5 flex-shrink-0" />
                 Títulos + hooks + roteiro básico
-              </li>
-            </ul>
-            <button 
-              onClick={() => onAuth('SIGNUP')}
-              className="w-full py-3 px-4 rounded-xl border-2 border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
-            >
-              Testar versão grátis
-            </button>
-          </div>
-
-          {/* Criador Plus */}
-          <div className="p-8 rounded-3xl border-2 border-indigo-600 bg-white relative shadow-xl flex flex-col">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-              Mais Popular
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Criador Pro</h3>
-            <p className="text-slate-500 text-sm mb-6">Criador individual sério</p>
-            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 39<span className="text-lg font-normal text-slate-500">/mês</span></div>
-            <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
-                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
-                Calendários ilimitados de 30 dias
-              </li>
-              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
-                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
-                3 projetos salvos
               </li>
             </ul>
             <button
                 onClick={() => onAuth('SIGNUP')}
-                className="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg transition-colors"
+                className="w-full py-3 px-4 rounded-xl border-2 border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-colors"
+            >
+              Testar grátis
+            </button>
+          </div>
+
+          {/* Pro */}
+          <div className="group p-6 lg:p-8 rounded-3xl border-2 border-indigo-600 bg-gradient-to-br from-indigo-50/50 to-white h-full flex flex-col relative shadow-xl hover:shadow-2xl transition-all">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+              Popular
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Criador Pro</h3>
+            <p className="text-slate-500 text-sm mb-6">Criador individual</p>
+            <div className="text-4xl font-bold text-slate-900 mb-8">R$ 39<span className="text-lg font-normal text-slate-500">/mês</span></div>
+            <ul className="space-y-3 mb-8 flex-1 min-h-0 text-sm text-slate-700 font-medium">
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5 flex-shrink-0" />
+                Calendários ilimitados 30 dias
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5 flex-shrink-0" />
+                3 projetos salvos
+              </li>
+              <li className="flex items-start gap-2 opacity-50">
+                <CheckCircle className="h-4 w-4 text-slate-400 shrink-0 mt-0.5 flex-shrink-0" />
+                Export básico
+              </li>
+            </ul>
+            <button
+                onClick={() => onAuth('SIGNUP')}
+                className="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg transition-all"
             >
               Começar agora
             </button>
           </div>
 
-          {/* Criador Pro */}
-          <div className="p-8 rounded-3xl border-2 border-indigo-600 bg-white relative shadow-xl flex flex-col">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+          {/* Plus - Mais Popular */}
+          <div className="group p-6 lg:p-8 rounded-3xl border-2 border-emerald-600 bg-gradient-to-br from-emerald-50/50 to-white h-full flex flex-col relative shadow-xl hover:shadow-2xl transition-all">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
               Mais Popular
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">Criador Plus</h3>
-            <p className="text-slate-500 text-sm mb-6">Criador individual sério</p>
+            <p className="text-slate-500 text-sm mb-6">Influencer pro</p>
             <div className="text-4xl font-bold text-slate-900 mb-8">R$ 69<span className="text-lg font-normal text-slate-500">/mês</span></div>
-            <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
-                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
-                Calendários ilimitados de 30 dias
+            <ul className="space-y-3 mb-8 flex-1 min-h-0 text-sm text-slate-700 font-medium">
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5 flex-shrink-0" />
+                Tudo do Pro + export Notion/Sheets
               </li>
-              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
-                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
-                Export Notion/Sheets
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5 flex-shrink-0" />
+                5 projetos + prioridade IA
               </li>
-              <li className="flex items-start gap-2 text-slate-700 font-medium text-sm">
-                <CheckCircle className="h-4 w-4 text-indigo-600 shrink-0 mt-0.5" />
-                5 projetos salvos
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5 flex-shrink-0" />
+                Templates custom
               </li>
             </ul>
-            <button 
-              onClick={() => onAuth('SIGNUP')}
-              className="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg transition-colors"
+            <button
+                onClick={() => onAuth('SIGNUP')}
+                className="w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-lg transition-all"
             >
               Começar agora
             </button>
           </div>
 
-          {/* Agência Max */}
-          <div className="p-8 rounded-3xl border border-slate-200 bg-white flex flex-col">
+          {/* Max */}
+          <div className="group p-6 lg:p-8 rounded-3xl border border-slate-200 bg-white h-full flex flex-col hover:shadow-md transition-all">
             <h3 className="text-xl font-bold text-slate-900 mb-2">Agência Max</h3>
-            <p className="text-slate-500 text-sm mb-6">Quem gerencia clientes/canais</p>
+            <p className="text-slate-500 text-sm mb-6">Equipes/agências</p>
             <div className="text-4xl font-bold text-slate-900 mb-8">R$ 99<span className="text-lg font-normal text-slate-500">/mês</span></div>
-            <ul className="space-y-4 mb-8 flex-1">
-              <li className="flex items-start gap-2 text-slate-600 text-sm">
-                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
-                Tudo ilimitado + suporte prioritário
+            <ul className="space-y-3 mb-8 flex-1 min-h-0 text-sm text-slate-600">
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5 flex-shrink-0" />
+                Tudo ilimitado + suporte 24h
               </li>
-              <li className="flex items-start gap-2 text-slate-600 text-sm">
-                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5 flex-shrink-0" />
                 Projetos ilimitados
               </li>
-              <li className="flex items-start gap-2 text-slate-600 text-sm">
-                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5" />
-                Templates custom & white label
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5 flex-shrink-0" />
+                White label & API
+              </li>
+              <li className="flex items-start gap-2 opacity-75">
+                <CheckCircle className="h-4 w-4 text-slate-900 shrink-0 mt-0.5 flex-shrink-0" />
+                Relatórios avançados
               </li>
             </ul>
-            <button 
-              onClick={() => onAuth('SIGNUP')}
-              className="w-full py-3 px-4 rounded-xl border border-indigo-200 text-indigo-700 font-bold hover:bg-indigo-50 transition-colors"
+            <button
+                onClick={() => onAuth('SIGNUP')}
+                className="w-full py-3 px-4 rounded-xl border-2 border-indigo-200 text-indigo-700 font-bold hover:bg-indigo-50 transition-colors"
             >
               Assinar Max
             </button>
           </div>
         </div>
       </section>
+
 
       {/* About Section */}
       <section className="py-16 bg-slate-50 border-t border-slate-200">
